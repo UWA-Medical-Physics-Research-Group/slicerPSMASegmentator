@@ -218,21 +218,24 @@ class PSMASegmentatorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         #track whole extention duration
         startTime = time.time()
 
-        # TODO: remove temp comments
+        install_successful = False
+
         try:
             slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
             self.logic.setupPythonRequirements()
             self.logic.log(_('Successfully installed PSMA Segmentator and required packages'))
+            install_successful = True
             slicer.app.restoreOverrideCursor()
         except Exception as e:
             slicer.util.errorDisplay(_("Failed to install required packages.\n\n{exception}").format(exception=e))
             slicer.app.restoreOverrideCursor()
-        
-        with slicer.util.tryWithErrorDisplay(_("Failed to compute results."), waitCursor=True):
-        # TODO pre-process inputs and process outputs
-            #Compute output
-            lesion_vals = [self.ui.Number_of_lesions, self.ui.TTV, self.ui.Tumour_SUVmean, self.ui.Tumour_SUVmax, self.ui.TLU, self.ui.TLQ, self.ui.Bone_mets, self.ui.Visceral_mets, self.ui.Liver_mets]
-            self.logic.process(self.ui.inputSelectorOne.currentNode(), self.ui.inputSelectorTwo.currentNode(), self.ui.outputSegmentation, self.ui.suvSlider.value, self.ui.defaultDeviceSelector.checked,  self.ui.cpuSelector.checked, self.ui.cudaSelector.checked, self.ui.cudaCustomSelector.checked, self.ui.gpuIndexSelector.value, self.ui.expandBox.checked, self.ui.verboseBox.checked, self.ui.fastBox.checked, lesion_vals)
+
+        if install_successful:
+            with slicer.util.tryWithErrorDisplay(_("Failed to compute results."), waitCursor=True):
+            # TODO pre-process inputs and process outputs
+                #Compute output
+                lesion_vals = [self.ui.Number_of_lesions, self.ui.TTV, self.ui.Tumour_SUVmean, self.ui.Tumour_SUVmax, self.ui.TLU, self.ui.TLQ, self.ui.Bone_mets, self.ui.Visceral_mets, self.ui.Liver_mets]
+                self.logic.process(self.ui.inputSelectorOne.currentNode(), self.ui.inputSelectorTwo.currentNode(), self.ui.outputSegmentation, self.ui.suvSlider.value, self.ui.defaultDeviceSelector.checked,  self.ui.cpuSelector.checked, self.ui.cudaSelector.checked, self.ui.cudaCustomSelector.checked, self.ui.gpuIndexSelector.value, self.ui.expandBox.checked, self.ui.verboseBox.checked, self.ui.fastBox.checked, lesion_vals)
             
         
         stopTime = time.time()
