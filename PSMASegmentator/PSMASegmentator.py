@@ -30,15 +30,14 @@ class PSMASegmentator(ScriptedLoadableModule):
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = _("PSMA Segmentator")
+        self.parent.title = _("PSMASegmentator")
         self.parent.categories = [translate("qSlicerAbstractCoreModule", "Segmentation")]
-        self.parent.dependencies = []  # TODO: add here list of module names that this module requires
+        self.parent.dependencies = ["NNUNet", "PyTorch", "TotalSegmentator"]
         self.parent.contributors = ["Logan Frost (University of Western Australia)", "Joel Noble (University of Western Australia)", "Jake Kendrick (University of Western Australia)"]
         # _() function marks text as translatable to other languages
         self.parent.helpText = _("""
 3D Slicer extension for automatic segmentation of PSMA CT/PET scans using the PSMASegmentator nnU-net model. For more information see the <a href="https://github.com/Smiley260/SlicerPSMASegmentator">module documentation</a>.
 """)
-        # TODO: replace with organization, grant and thanks
         self.parent.acknowledgementText = _("""
 This file was originally developed by Logan Frost, Masters student at the University of Western Australia, under the supervision of Jake Kendrick
 and is an implementation of the PSMA Segmentator model developed by Joel Noble, University of Western Australia.
@@ -220,23 +219,30 @@ class PSMASegmentatorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         install_successful = False
 
+        
+        slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
         try:
-            slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
             self.logic.setupPythonRequirements()
             self.logic.log(_('Successfully installed PSMA Segmentator and required packages'))
             install_successful = True
-            slicer.app.restoreOverrideCursor()
         except Exception as e:
             slicer.util.errorDisplay(_("Failed to install required packages.\n\n{exception}").format(exception=e))
-            slicer.app.restoreOverrideCursor()
+            
 
         if install_successful:
             with slicer.util.tryWithErrorDisplay(_("Failed to compute results."), waitCursor=True):
-            # TODO pre-process inputs and process outputs
                 #Compute output
                 lesion_vals = [self.ui.Number_of_lesions, self.ui.TTV, self.ui.Tumour_SUVmean, self.ui.Tumour_SUVmax, self.ui.TLU, self.ui.TLQ, self.ui.Bone_mets, self.ui.Visceral_mets, self.ui.Liver_mets]
-                self.logic.process(self.ui.inputSelectorOne.currentNode(), self.ui.inputSelectorTwo.currentNode(), self.ui.outputSegmentation, self.ui.suvSlider.value, self.ui.defaultDeviceSelector.checked,  self.ui.cpuSelector.checked, self.ui.cudaSelector.checked, self.ui.cudaCustomSelector.checked, self.ui.gpuIndexSelector.value, self.ui.expandBox.checked, self.ui.verboseBox.checked, self.ui.fastBox.checked, lesion_vals)
-            
+                vals = self.logic.process(self.ui.inputSelectorOne.currentNode(), self.ui.inputSelectorTwo.currentNode(), self.ui.outputSegmentation, self.ui.suvSlider.value, self.ui.defaultDeviceSelector.checked,  self.ui.cpuSelector.checked, self.ui.cudaSelector.checked, self.ui.cudaCustomSelector.checked, self.ui.gpuIndexSelector.value, self.ui.expandBox.checked, self.ui.verboseBox.checked, self.ui.fastBox.checked)
+
+                
+                for label in lesion_vals:
+                    if label.objectName in vals:
+                        label.setText(f"{vals[label.objectName]}")
+                    else:
+                        label.setText(f"No Value Generated")
+        
+        slicer.app.restoreOverrideCursor()
         
         stopTime = time.time()
         logging.info(f"Extension completed in {stopTime-startTime:.2f} seconds")
@@ -415,8 +421,7 @@ class PSMASegmentatorLogic(ScriptedLoadableModuleLogic):
                 gpuIndexSelector: int,
                 expandBox: bool,
                 verboseBox: bool,
-                fastBox: bool,
-                lesion_vals: list[qt.QLabel]) -> None:
+                fastBox: bool):
 
         """
         Run the processing algorithm.
@@ -486,13 +491,10 @@ class PSMASegmentatorLogic(ScriptedLoadableModuleLogic):
         self.log(_('Creating segmentations with PSMA Segmentator AI...'))
         self.log(f"The following command is being run: {psmaSegmentatorCommand + ["-i", inputFolder, "-o", outputSegmentationFolder] + options}")
         
-        slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
 
         try:
             proc = slicer.util.launchConsoleProcess(psmaSegmentatorCommand + ["-i", inputFolder, "-o", outputSegmentationFolder] + options)
-            slicer.app.restoreOverrideCursor()
         except Exception as e:
-            slicer.app.restoreOverrideCursor()
             slicer.util.errorDisplay(_("Failed to process segmentation results.\n\n{exception}").format(exception=e))
 
         self.logProcessOutput(proc)
@@ -526,18 +528,14 @@ class PSMASegmentatorLogic(ScriptedLoadableModuleLogic):
                 lesion_data = line
                 break
 
-        for label in lesion_vals:
-            if label.objectName in lesion_data:
-                label.setText(f"{lesion_data[label.objectName]}")
-            else:
-                label.setText(f"No Value Generated")
         
 
         self.log(_("Cleaning up temporary folder..."))
         if os.path.isdir(tempFolder):
             import shutil
             shutil.rmtree(tempFolder)
-        
+
+        return lesion_data
 
 
 #
