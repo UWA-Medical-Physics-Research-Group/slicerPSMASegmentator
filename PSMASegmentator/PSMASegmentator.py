@@ -32,7 +32,7 @@ class PSMASegmentator(ScriptedLoadableModule):
         ScriptedLoadableModule.__init__(self, parent)
         self.parent.title = _("PSMASegmentator")
         self.parent.categories = [translate("qSlicerAbstractCoreModule", "Segmentation")]
-        self.parent.dependencies = ["NNUNet", "PyTorch", "TotalSegmentator"]
+        self.parent.dependencies = []
         self.parent.contributors = ["Logan Frost (University of Western Australia)", "Joel Noble (University of Western Australia)", "Jake Kendrick (University of Western Australia)"]
         # _() function marks text as translatable to other languages
         self.parent.helpText = _("""
