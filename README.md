@@ -19,5 +19,14 @@ The file tree for the folder should then appear in the Extension Wizard GUI.
 
 Restart Slicer and the module should then become available int he modules header under Segmentation -> PSMASegmentator
 
+## License
+This tool is released under the GPL-3.0 License. See the LICENSE file for more details.
+
+## Citation
+If you use PSMASegmentator, please cite the software as:
+
+> Noble, J., Kendrick, J., et al. *PSMASegmentator: Open-source, AI-based software tool for automatic segmentation and biomarker extraction from PSMA PET/CT* GitHub repository: https://github.com/UWA-Medical-Physics-Research-Group/PSMASegmentator
+
+
 
 
