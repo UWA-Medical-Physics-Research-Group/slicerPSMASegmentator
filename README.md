@@ -1,6 +1,8 @@
 # PSMASegmentator
 3D Slicer extension implementing the PSMASegmentator model, a tool for the automatic segmentation of PSMA PET/CT images using deep learning. This extension will automatically create a segmentation file using the PSMASegmentator model.
 
+![Screenshot displaying the PSMASegmentator GUI and resulting segmentations](https://github.com/UWA-Medical-Physics-Research-Group/slicerPSMASegmentator/blob/main/Segments_Screenshot.png)
+
 ## Manual Installation
 #### (To be removed once PSMASegmentator is available in 3D Slicer Extension manager)
 For manually installing this Extension, download or clone the repository to your local device. 
@@ -17,6 +19,5 @@ The file tree for the folder should then appear in the Extension Wizard GUI.
 
 Restart Slicer and the module should then become available int he modules header under Segmentation -> PSMASegmentator
 
-### License
 
 
