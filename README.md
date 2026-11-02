@@ -34,6 +34,7 @@ Restart Slicer and the module should then become available int he modules header
 - Select `Input PET` -> `<your PET volume>`
 - Select any desired options to modify the segmentation process (or leave the values as default)
 - Click `Apply`
+  - The application will become unresponsive for the duration of the segmentation processing. Do not close or restart 3D Slicer or the segmentation will be cancelled.
   - When this module is used the first time:
     - It needs to download and install PyTorch and TotalSegmentator, and PSMASegmentator Python packages which can take some time. (~5 minutes)
   - Expected computation time:

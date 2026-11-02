@@ -1,0 +1,13 @@
+{
+    "scm":"git",
+    "scm_url":"https://github.com/UWA-Medical-Physics-Research-Group/slicerPSMASegmentator/tree/main",
+    "scm_revision":"https://github.com/UWA-Medical-Physics-Research-Group/slicerPSMASegmentator/tree/f7a055f81d10d625ac216dd1dfa17fa41ff737aa",
+    "depends":"PyTorch NNUNet TotalSegmentator",
+    "homepage":"https://github.com/UWA-Medical-Physics-Research-Group/slicerPSMASegmentator/tree/main",
+    "contributors":"Logan Frost (University of Western Australia), Jake Kendrick (University of Western Australia), Joel Noble (University of Western Australia)",
+    "category":"Segmentation",
+    "iconurl":"",
+    "description":"3D Slicer extension implementing the PSMASegmentator model, a tool for the automatic segmentation of PSMA PET/CT images using deep learning.",
+    "screenshoturls":"https://raw.githubusercontent.com/UWA-Medical-Physics-Research-Group/slicerPSMASegmentator/main/Segments_Screenshot.png",
+    "enabled":1
+}
